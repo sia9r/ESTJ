@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>داشبورد قیمت طلا — پارسیان / شمش / محاسبه</title>
+<title>جواهری استقلال</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
   :root{
@@ -61,7 +61,7 @@
       <div class="logo">G</div>
       <div>
         <h1>داشبورد قیمت طلا</h1>
-        <div style="font-size:12px;color:#666;font-weight:800">پارسیان · شمش · محاسبه — موبایل‌پسند و دسکتاپ بهینه</div>
+        <div style="font-size:12px;color:#666;font-weight:800">پارسیان · شمش · محاسبه </div>
       </div>
     </div>
 
@@ -109,11 +109,11 @@
             </div>
 
             <div class="field" style="min-width:150px">
-              <!-- only toggle visible, no label text next to it -->
               <div style="display:flex;align-items:center;justify-content:center;">
+                <!-- toggle پنهان: پیش‌فرض خاموش -> tolerance اعمال نخواهد شد -->
                 <div id="parsianTolToggle" class="tiny-toggle" role="switch" aria-checked="false" title="تلورانس پنهان"></div>
                 <select id="parsianTol" style="display:none;padding:8px;background:#fffbe6;border-radius:8px;border:1px solid var(--gold-strong);font-weight:800;margin-right:8px">
-                  <option value="20000">۲۰٬۰۰۰</option><option value="50000" selected>۵۰٬۰۰۰</option>
+                  <option value="20000">۲۰٬۰۰۰</option><option value="50000">۵۰٬۰۰۰</option>
                   <option value="70000">۷۰٬۰۰۰</option><option value="100000">۱۰۰٬۰۰۰</option>
                 </select>
               </div>
@@ -149,7 +149,7 @@
               <div style="display:flex;align-items:center;justify-content:center;">
                 <div id="shamshTolToggle" class="tiny-toggle" role="switch" aria-checked="false" title="تلورانس پنهان"></div>
                 <select id="shamshTol" style="display:none;padding:8px;background:#fffbe6;border-radius:8px;border:1px solid var(--gold-strong);font-weight:800;margin-right:8px">
-                  <option value="20000">۲۰٬۰۰۰</option><option value="50000" selected>۵۰٬۰۰۰</option>
+                  <option value="20000">۲۰٬۰۰۰</option><option value="50000">۵۰٬۰۰۰</option>
                   <option value="70000">۷۰٬۰۰۰</option><option value="100000">۱۰۰٬۰۰۰</option>
                 </select>
               </div>
@@ -220,11 +220,14 @@
           <div class="meta">عیار فعال و تبدیل خودکار</div>
           <div class="meta" style="font-size:13px;color:#666">نکته: برای محاسبه از قیمت‌های بالای صفحه استفاده می‌شود.</div>
           <div style="height:1px"></div>
+          <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
+            <div class="meta">آخرین محاسبه:</div><div id="topTimestamp" class="timestamp">—</div>
+          </div>
         </div>
       </aside>
     </div>
 
-    <footer>طراحی‌شده برای موبایل و دسکتاپ — اعداد با جداکنندهٔ هزارگان نمایش داده می‌شوند.</footer>
+    <footer>جواهری استقلال.</footer>
   </section>
 </div>
 
@@ -262,14 +265,19 @@ const parsianPurity = document.getElementById('parsianPurity');
 const parsianPurityCustom = document.getElementById('parsianPurityCustom');
 const parsianCustomWeight = document.getElementById('parsianCustomWeight');
 
-let parsianTol = 50000;
+// default: toggle OFF => no tolerance applied
+let parsianTol = 0;
 parsianTolToggle.addEventListener('click', ()=>{
   parsianTolToggle.classList.toggle('active');
   const active = parsianTolToggle.classList.contains('active');
   parsianTolSelect.style.display = active ? '' : 'none';
-  parsianTol = parseInt(parsianTolSelect.value,10) || 50000;
+  // when active, apply selected value; when inactive, tolerance = 0
+  parsianTol = active ? (parseInt(parsianTolSelect.value,10) || 0) : 0;
 });
-parsianTolSelect.addEventListener('change', ()=> parsianTol = parseInt(parsianTolSelect.value,10)||50000);
+parsianTolSelect.addEventListener('change', ()=> {
+  // only apply if toggle is active
+  if(parsianTolToggle.classList.contains('active')) parsianTol = parseInt(parsianTolSelect.value,10) || 0;
+});
 
 parsianPurity.addEventListener('change', ()=>{
   if(parsianPurity.value==='custom'){ parsianPurityCustom.style.display='block'; } else { parsianPurityCustom.style.display='none'; }
@@ -296,6 +304,7 @@ function renderParsianTable(filteredWeight){
     const goldCost = +(w * pricePerGram);
     const wage1 = 50000; const tax = +((goldCost + wage1) * 0.1);
     const wage2 = 50000;
+    // use parsianTol which is 0 when toggle is OFF
     const total = Math.round(goldCost + wage1 + tax + wage2 + (parsianTol||0));
     html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
   });
@@ -312,14 +321,18 @@ const shamshPurity = document.getElementById('shamshPurity');
 const shamshPurityCustom = document.getElementById('shamshPurityCustom');
 const shamshCustomWeight = document.getElementById('shamshCustomWeight');
 
-let shamshTol = 50000;
+// default: toggle OFF => no tolerance applied
+let shamshTol = 0;
 shamshTolToggle.addEventListener('click', ()=>{
   shamshTolToggle.classList.toggle('active');
   const active = shamshTolToggle.classList.contains('active');
   shamshTolSelect.style.display = active ? '' : 'none';
-  shamshTol = parseInt(shamshTolSelect.value,10) || 50000;
+  // apply only when active
+  shamshTol = active ? (parseInt(shamshTolSelect.value,10) || 0) : 0;
 });
-shamshTolSelect.addEventListener('change', ()=> shamshTol = parseInt(shamshTolSelect.value,10)||50000);
+shamshTolSelect.addEventListener('change', ()=> {
+  if(shamshTolToggle.classList.contains('active')) shamshTol = parseInt(shamshTolSelect.value,10) || 0;
+});
 
 shamshPurity.addEventListener('change', ()=>{
   if(shamshPurity.value==='custom'){ shamshPurityCustom.style.display='block'; } else { shamshPurityCustom.style.display='none'; }
@@ -346,6 +359,7 @@ function renderShamshTable(filteredWeight){
     const goldCost = +(w * pricePerGram);
     const ojrat = (w >= 1.0) ? 250000 : 220000;
     const base = goldCost + ojrat; const tax = +(base * 0.1);
+    // use shamshTol which is 0 when toggle is OFF
     const total = Math.round(base + tax + (shamshTol||0));
     html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
   });
@@ -391,7 +405,7 @@ function fabricateCalculate(){
   const wage = +(pure * (wagePercent/100));
   const profit = +((pure + wage) * (profitPercent/100));
   const tax = +(0.1 * (wage + profit));
-  const tol = 0; // fabrication no tolerance (per request)
+  const tol = 0; // fabrication: no tolerance
   const total = Math.round(pure + wage + profit + tax + tol);
   fabFinal.textContent = fmt(total) + ' تومان';
   fabPure.textContent = fmt(Math.round(pure)) + ' تومان';
@@ -399,7 +413,6 @@ function fabricateCalculate(){
   fabProfitOut.textContent = fmt(Math.round(profit)) + ' تومان';
   fabTaxOut.textContent = fmt(Math.round(tax)) + ' تومان';
   fabTolOut.textContent = fmt(tol) + ' تومان';
-  // update top timestamp if visible
   updateTimestamp();
 }
 
