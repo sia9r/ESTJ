@@ -15,20 +15,16 @@
     }
     html,body{height:100%;margin:0;padding:0;font-family:"Vazirmatn",Tahoma,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);-webkit-font-smoothing:antialiased}
     .wrap{max-width:var(--container-max);margin:18px auto;padding:18px;box-sizing:border-box}
-    /* Header */
     header.top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:14px;position:sticky;top:0;z-index:90;padding:12px;border-radius:10px;background:linear-gradient(135deg,var(--bg1),var(--bg2));backdrop-filter:blur(6px)}
     .brand{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
     h1{margin:0;font-size:20px;color:var(--gold);font-weight:900}
     .subtitle{font-size:12px;color:#666;font-weight:800}
-
     .top-controls{display:flex;flex-direction:column;gap:10px;align-items:flex-end;min-width:220px}
     .price-input{background:var(--card-bg);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;align-items:stretch;border:2px solid rgba(212,175,55,0.14);min-width:220px}
     .price-input label{font-weight:800;color:var(--muted);font-size:13px;text-align:right}
-
     .visual-small { width: 12ch; max-width:100%; box-sizing:border-box; text-align:center; direction:ltr; font-weight:900; font-size:15px; padding:6px 8px; border-radius:8px; border:1px solid #ddd; background:#fff; }
     .input-row { display:flex; gap:8px; align-items:center; justify-content:flex-end; }
     .clear-btn { background:#efefef; border:1px solid #ddd; padding:4px 8px; border-radius:6px; cursor:pointer; font-weight:900; }
-
     .switch-row{display:flex;gap:10px;align-items:center;justify-content:flex-end}
     .switch-item{display:flex;gap:8px;align-items:center;background:var(--card-bg);padding:8px 10px;border-radius:10px;border:1px solid rgba(0,0,0,0.04)}
     .switch-label{font-weight:800;font-size:13px;color:var(--muted);min-width:90px;text-align:right}
@@ -36,11 +32,9 @@
     .tiny-toggle::before{content:"";position:absolute;left:2px;top:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .25s}
     .tiny-toggle.active{background:#27ae60}
     .tiny-toggle.active::before{transform:translateX(20px)}
-    /* Tabs */
     .tabs{display:flex;gap:10px;margin:12px 0 16px;flex-wrap:wrap}
     .tab{padding:10px 14px;border-radius:12px;background:transparent;border:2px solid transparent;font-weight:900;cursor:pointer;color:var(--muted);user-select:none}
     .tab.active{background:linear-gradient(90deg,var(--accent),#f39c12);color:#fff;box-shadow:0 10px 30px rgba(240,190,60,0.12)}
-    /* Panel */
     .panel{background:var(--card-bg);border-radius:18px;padding:18px;box-shadow:0 18px 48px rgba(0,0,0,0.14);overflow:hidden}
     .panel-grid{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
     @media(max-width:980px){.panel-grid{grid-template-columns:1fr}}
@@ -72,23 +66,22 @@
       .side{order:2}
       .field{min-width:unset;width:100%}
       .main-btn{width:100%}
-
       .switch-item{justify-content:space-between;padding:10px}
       .input-row{justify-content:flex-start}
     }
     .dark{--bg1:#0f0f12;--bg2:#121217;--card-bg: rgba(6,6,6,0.6);--gold:#ffd973;--gold-strong:#f0c27b;--text:#eee;--muted:#f0c27b;background:linear-gradient(135deg,var(--bg1),var(--bg2))}
+    /* small spacing for price + button */
+    .price-display-row { display:flex; gap:8px; align-items:center; justify-content:center; margin-top:10px; }
+    .fetch-btn { padding:6px 10px; border-radius:8px; border:1px solid #ddd; background:#fff; cursor:pointer; font-weight:800; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="top" role="banner" aria-label="هدر">
       <div class="brand" aria-hidden="false">
-        <div>
-          <h1>داشبورد قیمت طلا</h1>
-        </div>
+        <div><h1>داشبورد قیمت طلا</h1></div>
         <div class="subtitle">پارسیان · شمش · محاسبه</div>
       </div>
-
 
       <div class="top-controls" role="region" aria-label="کنترل‌های بالا">
         <div class="price-input" title="قیمت ۱۸ و ۲۴ را وارد کنید (هر کدام را وارد کنید دیگری خودکار می‌شود)">
@@ -99,7 +92,6 @@
               <button type="button" class="clear-btn" data-target="price18" title="پاک کردن">×</button>
             </div>
           </div>
-
           <div class="input-row">
             <label for="price24">قیمت ۲۴ عیار</label>
             <div style="display:flex;gap:6px;align-items:center">
@@ -114,13 +106,11 @@
             <div class="switch-label">حالت تاریک</div>
             <div id="themeToggle" class="tiny-toggle" role="switch" aria-checked="false" tabindex="0" aria-label="تغییر حالت تاریک"></div>
           </div>
-
           <div class="switch-item" role="group" aria-label="نمایش زمان">
             <div class="switch-label">نمایش تاریخ و زمان</div>
             <div id="timeToggleTop" class="tiny-toggle" role="switch" aria-checked="false" tabindex="0" aria-label="نمایش تاریخ و زمان"></div>
           </div>
         </div>
-
 
         <div style="display:flex;justify-content:flex-end">
           <div id="headerTimestamp" class="timestamp" style="display:none">—</div>
@@ -137,17 +127,16 @@
     <section class="panel" role="main">
       <div class="panel-grid">
         <div class="content">
-
-
           <div style="margin-bottom:14px; text-align:center;">
             <h2 style="margin:0 0 6px 0">قیمت یک گرم 18 طلا در این لحظه</h2>
 
             <style>#gram18_price_now { font-size:31px; color:#3ec854; font-weight:bold; text-align:center; }</style>
-            <div id="gram18_price_now">در حال دریافت...</div>
 
-
-            
-
+            <div class="price-display-row">
+              <div id="gram18_price_now">در حال دریافت...</div>
+              <button id="fetchPriceBtn" class="fetch-btn" title="دریافت قیمت از سایت">دریافت قیمت</button>
+            </div>
+          </div>
 
           <!-- PARSIAN -->
           <div class="mode" id="parsian" data-mode="parsian">
@@ -188,7 +177,7 @@
             <div class="table" id="parsianTableWrap" aria-live="polite"></div>
           </div>
 
-          <!-- SHEMSH -->
+          <!-- SHAMSH -->
           <div class="mode" id="shamsh" data-mode="shamsh" style="display:none">
             <div class="controls">
               <div class="field">
@@ -284,9 +273,8 @@
           </div>
 
         </div>
-                <aside class="side" aria-label="خلاصه">
 
-
+        <aside class="side" aria-label="خلاصه">
           <div class="summary">
             <div class="big">قیمت فعال: <span id="activePriceDisplay">—</span></div>
             <div class="meta">عیار فعال و تبدیل خودکار</div>
@@ -297,35 +285,24 @@
               <div id="asideTimestamp" class="timestamp">—</div>
             </div>
           </div>
-                </aside>
-
-
-        
+        </aside>
 
       </div>
-
-
+      <footer>جواهری استقلال.</footer>
     </section>
   </div>
 
-
   <script>
-
-    function fmt(n){
-      try{ return Number(n).toLocaleString('en-US'); }catch(e){return n}
-    }
-    function unfmt(str){
-      if(str===undefined||str===null) return NaN;
-      let s = String(str).replace(/,/g,'').trim();
-      if(s==='') return NaN;
-      return Number(s);
-    }
-
+    /* ---------- helpers ---------- */
+    function fmt(n){ try{ return Number(n).toLocaleString('en-US'); }catch(e){return n} }
+    function unfmt(str){ if(str===undefined||str===null) return NaN; let s = String(str).replace(/,/g,'').trim(); if(s==='') return NaN; return Number(s); }
 
     const price18Input = document.getElementById('price18');
     const price24Input = document.getElementById('price24');
+    const gramDisplay = document.getElementById('gram18_price_now');
+    const fetchBtn = document.getElementById('fetchPriceBtn');
 
-
+    /* sync 18 <-> 24 */
     function syncFrom18(){
       const v = unfmt(price18Input.value);
       if(isNaN(v)){ price24Input.value=''; updateActivePriceDisplay(); return; }
@@ -341,12 +318,19 @@
       updateActivePriceDisplay();
     }
 
+    /* when user edits price18 manually, reflect to gram display */
     price18Input.addEventListener('input', (e)=>{
       const raw = e.target.value.replace(/,/g,'');
       price18Input.value = raw === '' ? '' : fmt(Number(raw));
+      // reflect user's manual value to displayed "قیمت یک گرم 18 طلا در این لحظه"
+      const p = unfmt(price18Input.value);
+      if(!isNaN(p) && gramDisplay){
+        gramDisplay.textContent = fmt(Math.round(p)) + ' تومان';
+      }
       syncFrom18();
       autoCalcActive();
     });
+
     price24Input.addEventListener('input', (e)=>{
       const raw = e.target.value.replace(/,/g,'');
       price24Input.value = raw === '' ? '' : fmt(Number(raw));
@@ -354,7 +338,7 @@
       autoCalcActive();
     });
 
-
+    /* tabs */
     const tabs = document.querySelectorAll('.tab');
     const modes = document.querySelectorAll('.mode');
     tabs.forEach(t=> t.addEventListener('click', ()=>{
@@ -363,15 +347,13 @@
       const m = t.dataset.mode;
       modes.forEach(md=> md.style.display = (md.dataset.mode === m ? '' : 'none'));
       updateActivePriceDisplay();
-
       const contentTop = document.querySelector('.panel').offsetTop;
       window.scrollTo({top: contentTop - 10, behavior:'smooth'});
       autoCalcActive();
     }));
 
-
+    /* weights, parsian/shamsh/fabric code (unchanged except shamsh ojrat values kept as you set) */
     const weights = [0.05,0.07,0.100,0.150,0.200,0.250,0.300,0.350,0.400,0.450,0.500,0.550,0.600,0.650,0.700,0.750,0.800,0.850,0.900,0.950,1.0,1.100,1.150,1.200,1.250,1.300,1.350,1.400,1.450,1.500,1.550,1.600,1.650,1.700,1.750,1.800,1.850,1.900,1.950,2.00,3.00,4.00];
-
 
     const parsianCalcBtn = document.getElementById('parsianCalc');
     const parsianTolToggle = document.getElementById('parsianTolToggle');
@@ -380,8 +362,8 @@
     const parsianPurity = document.getElementById('parsianPurity');
     const parsianPurityCustom = document.getElementById('parsianPurityCustom');
     const parsianCustomWeight = document.getElementById('parsianCustomWeight');
-
     let parsianTol = 0;
+
     parsianTolToggle.addEventListener('click', ()=>{
       parsianTolToggle.classList.toggle('active');
       const active = parsianTolToggle.classList.contains('active');
@@ -424,7 +406,7 @@
       parsianTableWrap.innerHTML = html;
     }
 
-    /* ---------- SHAMSH ---------- */
+    /* SHAMSH */
     const shamshCalcBtn = document.getElementById('shamshCalc');
     const shamshTolToggle = document.getElementById('shamshTolToggle');
     const shamshTolSelect = document.getElementById('shamshTol');
@@ -432,8 +414,8 @@
     const shamshPurity = document.getElementById('shamshPurity');
     const shamshPurityCustom = document.getElementById('shamshPurityCustom');
     const shamshCustomWeight = document.getElementById('shamshCustomWeight');
-
     let shamshTol = 0;
+
     shamshTolToggle.addEventListener('click', ()=>{
       shamshTolToggle.classList.toggle('active');
       const active = shamshTolToggle.classList.contains('active');
@@ -467,7 +449,7 @@
       const list = filteredWeight ? [Number(filteredWeight)] : weights;
       list.forEach(w=>{
         const goldCost = +(w * pricePerGram);
-        const ojrat = (w >= 1.0) ? 400000 : 420000;
+        const ojrat = (w >= 1.0) ? 400000 : 420000; // مقدار اجرت طبق کد تو
         const base = goldCost + ojrat; const tax = +(base * 0.1);
         const total = Math.round(base + tax + (shamshTol||0));
         html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
@@ -476,7 +458,7 @@
       shamshTableWrap.innerHTML = html;
     }
 
-    /* ---------- FABRICATION ---------- */
+    /* FABRICATION */
     const fabCalcBtn = document.getElementById('fabCalc');
     const fabWeightInput = document.getElementById('fabWeight');
     const fabWageInput = document.getElementById('fabWage');
@@ -527,7 +509,7 @@
       updateTimestamp();
     }
 
-
+    /* timestamp & theme */
     const timeToggleTop = document.getElementById('timeToggleTop');
     const headerTimestamp = document.getElementById('headerTimestamp');
     const asideTimestamp = document.getElementById('asideTimestamp');
@@ -539,14 +521,11 @@
       asideTimestamp.style.display = topTimeVisible ? '' : 'none';
       if(topTimeVisible) updateTimestamp();
     });
-
-
     const themeToggle = document.getElementById('themeToggle');
     themeToggle.addEventListener('click', ()=>{
       themeToggle.classList.toggle('active');
       document.documentElement.classList.toggle('dark');
     });
-
 
     function updateActivePriceDisplay(){
       const active = document.querySelector('.tab.active').dataset.mode;
@@ -570,18 +549,15 @@
       document.getElementById('activePriceDisplay').textContent = isNaN(pricePerGram) ? 'قیمت وارد نشده' : (fmt(Math.round(pricePerGram)) + ' تومان (عیار ' + purity + ')');
     }
 
-
     function updateTimestamp(){
       const now = (new Date()).toLocaleString();
       if(headerTimestamp) headerTimestamp.textContent = now;
       if(asideTimestamp) asideTimestamp.textContent = now;
     }
 
-
     function autoCalcActive() {
       const active = document.querySelector('.tab.active').dataset.mode;
       if(active === 'parsian') {
-
         const w = parsianCustomWeight.value && String(parsianCustomWeight.value).trim() !== '' ? Number(parsianCustomWeight.value) : null;
         renderParsianTable(w);
       } else if(active === 'shamsh') {
@@ -593,11 +569,9 @@
       updateActivePriceDisplay();
     }
 
-
     parsianCalcBtn.addEventListener('click', ()=>{ const w = parsianCustomWeight.value.trim(); renderParsianTable(w? Number(w) : null); updateTimestamp(); updateActivePriceDisplay(); });
     shamshCalcBtn.addEventListener('click', ()=>{ const w = shamshCustomWeight.value.trim(); renderShamshTable(w? Number(w) : null); updateTimestamp(); updateActivePriceDisplay(); });
     document.getElementById('fabCalc').addEventListener('click', ()=>{ fabricateCalculate(); updateActivePriceDisplay(); });
-
 
     document.addEventListener('click', function(e){
       const btn = e.target.closest('.clear-btn');
@@ -606,18 +580,11 @@
       if(targetId) {
         const el = document.getElementById(targetId);
         if(el){ el.value = ''; el.dispatchEvent(new Event('input')); autoCalcActive(); }
-      } else if(btn.id === 'manualClearBtn') {
-        document.getElementById('manualPriceInput').value = '';
-
-        if(typeof update3 === 'function') update3();
-        autoCalcActive();
       }
     });
 
     document.querySelectorAll('.tiny-toggle').forEach(t=>{
-      t.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); t.click(); }
-      });
+      t.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); t.click(); } });
     });
 
     document.body.addEventListener('keydown', (e)=>{
@@ -629,14 +596,19 @@
       }
     });
 
-
+    // initial UI
     updateActivePriceDisplay();
     asideTimestamp.style.display = 'none';
 
-  
+    /* ================== Fetch price logic (single initial fetch + manual refresh) ==================
+       - update3(shouldSetInput)
+         - shouldSetInput = true : set both display and price18 input (used on initial load and when user presses fetch button)
+         - shouldSetInput = false: update only display (not used here, kept for completeness)
+       - No periodic automatic polling.
+    =================================================================== */
     var geram18_prev = 10444;
     var geram18_now;
-    function update3() {
+    function update3(shouldSetInput){
       var item = "c";
       geram18_prev = parseFloat(geram18_prev);
       var xmlHttp = new XMLHttpRequest();
@@ -648,18 +620,14 @@
             geram18_now = parseFloat(html["c"]);
             var priceElement = document.getElementById("gram18_price_now");
             if (priceElement) {
-
               var raw = parseInt(geram18_now, 10);
               if (!isFinite(raw)) raw = 0;
               var normalized = raw;
-
-              if (Math.abs(normalized) < 100000) normalized = normalized * 1000;
+              if (Math.abs(normalized) < 100000) normalized = normalized * 1000; // normalize shorthand numbers like 10500 -> 10,500,000
               priceElement.innerHTML = normalized.toLocaleString("en-US") + " تومان";
-
-
-              if (price18Input) {
+              if (shouldSetInput && price18Input) {
                 price18Input.value = normalized ? fmt(Math.round(normalized)) : '';
-
+                // sync and calculate after setting input
                 syncFrom18();
                 autoCalcActive();
               }
@@ -669,51 +637,25 @@
           }
         }
       };
-
       xmlHttp.open("GET", "https://tabangohar.com/GheymatKhan/prices_in_table.html?v=" + (new Date().toISOString().substring(0,16)), true);
       xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xmlHttp.send("item=" + item);
     }
 
-    try { update3(); } catch(e){ console.log('update3 initial error', e); }
-    setInterval(function(){ try{ update3(); } catch(e){ console.log('update3 error', e); } }, 20000);
+    // initial fetch once on load and set inputs
+    try { update3(true); } catch(e){ console.log('update3 initial error', e); }
 
+    // fetch button: user-initiated refresh — will overwrite price18 input & display
+    fetchBtn.addEventListener('click', function(){ update3(true); });
 
-    const manualInput = document.getElementById('manualPriceInput');
-    manualInput.addEventListener('input', function(e){
-      const raw = (''+this.value).replace(/[^\d]/g,'');
-      if(raw === '') {
-
-        return;
-      }
-
-      let n = parseInt(raw,10);
-      if(!isFinite(n)) return;
-      if(Math.abs(n) < 100000) n = n * 1000;
-
-      const priceElement = document.getElementById("gram18_price_now");
-      if(priceElement) priceElement.innerHTML = fmt(n) + ' تومان';
-      price18Input.value = fmt(n);
-      syncFrom18();
-      autoCalcActive();
-    });
-
-    document.getElementById('manualClearBtn').addEventListener('click', function(){
-      manualInput.value = '';
-
-      update3();
-      autoCalcActive();
-    });
-
+    /* attach generic autocalc listeners */
     document.querySelectorAll('.wrap input, .wrap select').forEach(el=>{
-
       if(!el.dataset._autocalc){
         el.addEventListener('input', autoCalcActive);
         el.addEventListener('change', autoCalcActive);
         el.dataset._autocalc = '1';
       }
     });
-
 
     document.querySelectorAll('.clear-btn').forEach(b=>{
       b.setAttribute('tabindex','0');
