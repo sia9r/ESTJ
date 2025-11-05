@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>جواهری استقلال — واکنش‌گرا (با خواندن قیمت)</title>
+  <title>جواهری استقلال </title>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -467,7 +467,7 @@
       const list = filteredWeight ? [Number(filteredWeight)] : weights;
       list.forEach(w=>{
         const goldCost = +(w * pricePerGram);
-        const ojrat = (w >= 1.0) ? 250000 : 220000;
+        const ojrat = (w >= 1.0) ? 400000 : 420000;
         const base = goldCost + ojrat; const tax = +(base * 0.1);
         const total = Math.round(base + tax + (shamshTol||0));
         html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
