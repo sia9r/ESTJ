@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>جواهری استقلال </title>
+  <title>قیمت پارسیان، شمش، طلا</title>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -79,8 +79,8 @@
   <div class="wrap">
     <header class="top" role="banner" aria-label="هدر">
       <div class="brand" aria-hidden="false">
-        <div><h1>داشبورد قیمت طلا</h1></div>
-        <div class="subtitle">پارسیان · شمش · محاسبه</div>
+        <div><h1>داشبورد </h1></div>
+        <div class="subtitle">نسخه رسمی</div>
       </div>
 
       <div class="top-controls" role="region" aria-label="کنترل‌های بالا">
@@ -267,7 +267,7 @@
               </div>
               <div style="display:flex;gap:8px;margin-top:8px;justify-content:space-around;flex-wrap:wrap">
                 <div class="meta">مالیات: <span id="fabTax">—</span></div>
-                <div class="meta">تلورانس: <span id="fabTol">—</span></div>
+                /* <div class="meta">تلورانس: <span id="fabTol">—</span></div> */
               </div>
             </div>
           </div>
@@ -288,7 +288,7 @@
         </aside>
 
       </div>
-      <footer>جواهری استقلال.</footer>
+      <footer>--------------------------------------------------</footer>
     </section>
   </div>
 
@@ -449,7 +449,7 @@
       const list = filteredWeight ? [Number(filteredWeight)] : weights;
       list.forEach(w=>{
         const goldCost = +(w * pricePerGram);
-        const ojrat = (w >= 1.0) ? 400000 : 420000; // مقدار اجرت طبق کد تو
+        const ojrat = (w >= 1.0) ? 430000 : 450000; 
         const base = goldCost + ojrat; const tax = +(base * 0.1);
         const total = Math.round(base + tax + (shamshTol||0));
         html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
