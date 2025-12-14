@@ -104,11 +104,11 @@
         <div class="switch-row" aria-hidden="false">
           <div class="switch-item" role="group" aria-label="تم">
             <div class="switch-label">حالت تاریک</div>
-            <div id="themeToggle" class="tiny-toggle" role="switch" aria-checked="false" tabindex="0" aria-label="تغییر حالت تاریک"></div>
+            <div id="themeToggle" class="tiny-toggle" role="switch" aria-checked="false" tabindex="1" aria-label="تغییر حالت تاریک"></div>
           </div>
           <div class="switch-item" role="group" aria-label="نمایش زمان">
             <div class="switch-label">نمایش تاریخ و زمان</div>
-            <div id="timeToggleTop" class="tiny-toggle" role="switch" aria-checked="false" tabindex="0" aria-label="نمایش تاریخ و زمان"></div>
+            <div id="timeToggleTop" class="tiny-toggle" role="switch" aria-checked="false" tabindex="1" aria-label="نمایش تاریخ و زمان"></div>
           </div>
         </div>
 
@@ -398,7 +398,7 @@
       list.forEach(w=>{
         const goldCost = +(w * pricePerGram);
         const wage1 = 50000; const tax = +((goldCost + wage1) * 0.1);
-        const wage2 = 50000;
+        const wage2 = 100000;
         const total = Math.round(goldCost + wage1 + tax + wage2 + (parsianTol||0));
         html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
       });
@@ -449,7 +449,7 @@
       const list = filteredWeight ? [Number(filteredWeight)] : weights;
       list.forEach(w=>{
         const goldCost = +(w * pricePerGram);
-        const ojrat = (w >= 1.0) ? 430000 : 450000; 
+        const ojrat = (w >= 1.0) ? 630000 : 650000; 
         const base = goldCost + ojrat; const tax = +(base * 0.1);
         const total = Math.round(base + tax + (shamshTol||0));
         html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
