@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" class="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -104,10 +104,12 @@
         <div class="switch-row" aria-hidden="false">
           <div class="switch-item" role="group" aria-label="تم">
             <div class="switch-label">حالت تاریک</div>
-            <div id="themeToggle" class="tiny-toggle" role="switch" aria-checked="true" tabindex="0" aria-label="تغییر حالت تاریک"></div>
+            <!-- themeToggle default: aria-checked="true" and active class; we also persist in localStorage -->
+            <div id="themeToggle" class="tiny-toggle active" role="switch" aria-checked="true" tabindex="0" aria-label="تغییر حالت تاریک"></div>
           </div>
           <div class="switch-item" role="group" aria-label="نمایش زمان">
             <div class="switch-label">نمایش تاریخ و زمان</div>
+            <!-- timeToggle default: aria-checked="false" (you can change to true if you want it visible by default) -->
             <div id="timeToggleTop" class="tiny-toggle" role="switch" aria-checked="false" tabindex="0" aria-label="نمایش تاریخ و زمان"></div>
           </div>
         </div>
@@ -267,7 +269,7 @@
               </div>
               <div style="display:flex;gap:8px;margin-top:8px;justify-content:space-around;flex-wrap:wrap">
                 <div class="meta">مالیات: <span id="fabTax">—</span></div>
-                /* <div class="meta">تلورانس: <span id="fabTol">—</span></div> */
+                <!-- <div class="meta">تلورانس: <span id="fabTol">—</span></div> -->
               </div>
             </div>
           </div>
@@ -297,12 +299,58 @@
     function fmt(n){ try{ return Number(n).toLocaleString('en-US'); }catch(e){return n} }
     function unfmt(str){ if(str===undefined||str===null) return NaN; let s = String(str).replace(/,/g,'').trim(); if(s==='') return NaN; return Number(s); }
 
+    /* ---------- element refs ---------- */
     const price18Input = document.getElementById('price18');
     const price24Input = document.getElementById('price24');
     const gramDisplay = document.getElementById('gram18_price_now');
     const fetchBtn = document.getElementById('fetchPriceBtn');
 
-    /* sync 18 <-> 24 */
+    /* toggles */
+    const themeToggle = document.getElementById('themeToggle');
+    const timeToggleTop = document.getElementById('timeToggleTop');
+    const headerTimestamp = document.getElementById('headerTimestamp');
+    const asideTimestamp = document.getElementById('asideTimestamp');
+
+    /* other controls */
+    const tabs = document.querySelectorAll('.tab');
+    const modes = document.querySelectorAll('.mode');
+
+    /* PARSIAN */
+    const weights = [0.05,0.07,0.100,0.150,0.170,0.200,0.250,0.300,0.350,0.400,0.450,0.500,0.550,0.600,0.650,0.700,0.750,0.800,0.850,0.900,0.950,1.0,1.100,1.150,1.200,1.250,1.300,1.350,1.400,1.450,1.500,1.550,1.600,1.650,1.700,1.750,1.800,1.850,1.900,1.950,2.00,3.00,4.00];
+    const parsianCalcBtn = document.getElementById('parsianCalc');
+    const parsianTolToggle = document.getElementById('parsianTolToggle');
+    const parsianTolSelect = document.getElementById('parsianTol');
+    const parsianTableWrap = document.getElementById('parsianTableWrap');
+    const parsianPurity = document.getElementById('parsianPurity');
+    const parsianPurityCustom = document.getElementById('parsianPurityCustom');
+    const parsianCustomWeight = document.getElementById('parsianCustomWeight');
+    let parsianTol = 0;
+
+    /* SHAMSH */
+    const shamshCalcBtn = document.getElementById('shamshCalc');
+    const shamshTolToggle = document.getElementById('shamshTolToggle');
+    const shamshTolSelect = document.getElementById('shamshTol');
+    const shamshTableWrap = document.getElementById('shamshTableWrap');
+    const shamshPurity = document.getElementById('shamshPurity');
+    const shamshPurityCustom = document.getElementById('shamshPurityCustom');
+    const shamshCustomWeight = document.getElementById('shamshCustomWeight');
+    let shamshTol = 0;
+
+    /* FAB */
+    const fabCalcBtn = document.getElementById('fabCalc');
+    const fabWeightInput = document.getElementById('fabWeight');
+    const fabWageInput = document.getElementById('fabWage');
+    const fabProfitInput = document.getElementById('fabProfit');
+    const fabFinal = document.getElementById('fabFinal');
+    const fabPure = document.getElementById('fabPure');
+    const fabWageOut = document.getElementById('fabWageOut');
+    const fabProfitOut = document.getElementById('fabProfitOut');
+    const fabTaxOut = document.getElementById('fabTax');
+    const fabTolOut = document.getElementById('fabTol');
+    const fabPurity = document.getElementById('fabPurity');
+    const fabPurityCustom = document.getElementById('fabPurityCustom');
+
+    /* ---------- helpers & syncs ---------- */
     function syncFrom18(){
       const v = unfmt(price18Input.value);
       if(isNaN(v)){ price24Input.value=''; updateActivePriceDisplay(); return; }
@@ -318,11 +366,9 @@
       updateActivePriceDisplay();
     }
 
-    /* when user edits price18 manually, reflect to gram display */
     price18Input.addEventListener('input', (e)=>{
       const raw = e.target.value.replace(/,/g,'');
       price18Input.value = raw === '' ? '' : fmt(Number(raw));
-      // reflect user's manual value to displayed "قیمت یک گرم 18 طلا در این لحظه"
       const p = unfmt(price18Input.value);
       if(!isNaN(p) && gramDisplay){
         gramDisplay.textContent = fmt(Math.round(p)) + ' تومان';
@@ -338,9 +384,6 @@
       autoCalcActive();
     });
 
-    /* tabs */
-    const tabs = document.querySelectorAll('.tab');
-    const modes = document.querySelectorAll('.mode');
     tabs.forEach(t=> t.addEventListener('click', ()=>{
       tabs.forEach(x=>{ x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
       t.classList.add('active'); t.setAttribute('aria-selected','true');
@@ -352,18 +395,7 @@
       autoCalcActive();
     }));
 
-    /* weights, parsian/shamsh/fabric code (unchanged except shamsh ojrat values kept as you set) */
-    const weights = [0.05,0.07,0.100,0.150,0.170,0.200,0.250,0.300,0.350,0.400,0.450,0.500,0.550,0.600,0.650,0.700,0.750,0.800,0.850,0.900,0.950,1.0,1.100,1.150,1.200,1.250,1.300,1.350,1.400,1.450,1.500,1.550,1.600,1.650,1.700,1.750,1.800,1.850,1.900,1.950,2.00,3.00,4.00];
-
-    const parsianCalcBtn = document.getElementById('parsianCalc');
-    const parsianTolToggle = document.getElementById('parsianTolToggle');
-    const parsianTolSelect = document.getElementById('parsianTol');
-    const parsianTableWrap = document.getElementById('parsianTableWrap');
-    const parsianPurity = document.getElementById('parsianPurity');
-    const parsianPurityCustom = document.getElementById('parsianPurityCustom');
-    const parsianCustomWeight = document.getElementById('parsianCustomWeight');
-    let parsianTol = 0;
-
+    /* parsian logic */
     parsianTolToggle.addEventListener('click', ()=>{
       parsianTolToggle.classList.toggle('active');
       const active = parsianTolToggle.classList.contains('active');
@@ -406,16 +438,7 @@
       parsianTableWrap.innerHTML = html;
     }
 
-    /* SHAMSH */
-    const shamshCalcBtn = document.getElementById('shamshCalc');
-    const shamshTolToggle = document.getElementById('shamshTolToggle');
-    const shamshTolSelect = document.getElementById('shamshTol');
-    const shamshTableWrap = document.getElementById('shamshTableWrap');
-    const shamshPurity = document.getElementById('shamshPurity');
-    const shamshPurityCustom = document.getElementById('shamshPurityCustom');
-    const shamshCustomWeight = document.getElementById('shamshCustomWeight');
-    let shamshTol = 0;
-
+    /* shamsh logic */
     shamshTolToggle.addEventListener('click', ()=>{
       shamshTolToggle.classList.toggle('active');
       const active = shamshTolToggle.classList.contains('active');
@@ -449,7 +472,7 @@
       const list = filteredWeight ? [Number(filteredWeight)] : weights;
       list.forEach(w=>{
         const goldCost = +(w * pricePerGram);
-        const ojrat = (w >= 1.0) ? 630000 : 650000; 
+        const ojrat = (w >= 1.0) ? 630000 : 650000;
         const base = goldCost + ojrat; const tax = +(base * 0.1);
         const total = Math.round(base + tax + (shamshTol||0));
         html += `<tr><td>${w.toFixed(3)}</td><td class="price-cell">${fmt(total)} تومان</td></tr>`;
@@ -458,20 +481,7 @@
       shamshTableWrap.innerHTML = html;
     }
 
-    /* FABRICATION */
-    const fabCalcBtn = document.getElementById('fabCalc');
-    const fabWeightInput = document.getElementById('fabWeight');
-    const fabWageInput = document.getElementById('fabWage');
-    const fabProfitInput = document.getElementById('fabProfit');
-    const fabFinal = document.getElementById('fabFinal');
-    const fabPure = document.getElementById('fabPure');
-    const fabWageOut = document.getElementById('fabWageOut');
-    const fabProfitOut = document.getElementById('fabProfitOut');
-    const fabTaxOut = document.getElementById('fabTax');
-    const fabTolOut = document.getElementById('fabTol');
-    const fabPurity = document.getElementById('fabPurity');
-    const fabPurityCustom = document.getElementById('fabPurityCustom');
-
+    /* fabrication logic */
     fabPurity.addEventListener('change', ()=> { fabPurityCustom.style.display = fabPurity.value==='custom' ? 'block' : 'none'; autoCalcActive(); });
     fabWeightInput.addEventListener('input', ()=> autoCalcActive());
     fabWageInput.addEventListener('input', ()=> autoCalcActive());
@@ -509,23 +519,12 @@
       updateTimestamp();
     }
 
-    /* timestamp & theme */
-    const timeToggleTop = document.getElementById('timeToggleTop');
-    const headerTimestamp = document.getElementById('headerTimestamp');
-    const asideTimestamp = document.getElementById('asideTimestamp');
-    let topTimeVisible = false;
-    timeToggleTop.addEventListener('click', ()=>{
-      timeToggleTop.classList.toggle('active');
-      topTimeVisible = timeToggleTop.classList.contains('active');
-      headerTimestamp.style.display = topTimeVisible ? '' : 'none';
-      asideTimestamp.style.display = topTimeVisible ? '' : 'none';
-      if(topTimeVisible) updateTimestamp();
-    });
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', ()=>{
-      themeToggle.classList.toggle('active');
-      document.documentElement.classList.toggle('dark');
-    });
+    /* timestamp & helpers */
+    function updateTimestamp(){
+      const now = (new Date()).toLocaleString();
+      if(headerTimestamp) headerTimestamp.textContent = now;
+      if(asideTimestamp) asideTimestamp.textContent = now;
+    }
 
     function updateActivePriceDisplay(){
       const active = document.querySelector('.tab.active').dataset.mode;
@@ -549,12 +548,6 @@
       document.getElementById('activePriceDisplay').textContent = isNaN(pricePerGram) ? 'قیمت وارد نشده' : (fmt(Math.round(pricePerGram)) + ' تومان (عیار ' + purity + ')');
     }
 
-    function updateTimestamp(){
-      const now = (new Date()).toLocaleString();
-      if(headerTimestamp) headerTimestamp.textContent = now;
-      if(asideTimestamp) asideTimestamp.textContent = now;
-    }
-
     function autoCalcActive() {
       const active = document.querySelector('.tab.active').dataset.mode;
       if(active === 'parsian') {
@@ -571,7 +564,7 @@
 
     parsianCalcBtn.addEventListener('click', ()=>{ const w = parsianCustomWeight.value.trim(); renderParsianTable(w? Number(w) : null); updateTimestamp(); updateActivePriceDisplay(); });
     shamshCalcBtn.addEventListener('click', ()=>{ const w = shamshCustomWeight.value.trim(); renderShamshTable(w? Number(w) : null); updateTimestamp(); updateActivePriceDisplay(); });
-    document.getElementById('fabCalc').addEventListener('click', ()=>{ fabricateCalculate(); updateActivePriceDisplay(); });
+    fabCalcBtn.addEventListener('click', ()=>{ fabricateCalculate(); updateActivePriceDisplay(); });
 
     document.addEventListener('click', function(e){
       const btn = e.target.closest('.clear-btn');
@@ -592,20 +585,11 @@
         const active = document.querySelector('.tab.active').dataset.mode;
         if(active==='parsian') parsianCalcBtn.click();
         else if(active==='shamsh') shamshCalcBtn.click();
-        else document.getElementById('fabCalc').click();
+        else fabCalcBtn.click();
       }
     });
 
-    // initial UI
-    updateActivePriceDisplay();
-    asideTimestamp.style.display = 'none';
-
-    /* ================== Fetch price logic (single initial fetch + manual refresh) ==================
-       - update3(shouldSetInput)
-         - shouldSetInput = true : set both display and price18 input (used on initial load and when user presses fetch button)
-         - shouldSetInput = false: update only display (not used here, kept for completeness)
-       - No periodic automatic polling.
-    =================================================================== */
+    /* ================== Fetch price logic ================== */
     var geram18_prev = 10444;
     var geram18_now;
     function update3(shouldSetInput){
@@ -642,13 +626,90 @@
       xmlHttp.send("item=" + item);
     }
 
-    // initial fetch once on load and set inputs
-    try { update3(true); } catch(e){ console.log('update3 initial error', e); }
-
     // fetch button: user-initiated refresh — will overwrite price18 input & display
     fetchBtn.addEventListener('click', function(){ update3(true); });
 
-    /* attach generic autocalc listeners */
+    /* ---------- persistence + initial toggle sync ---------- */
+    const LS_KEYS = { theme: 'pref_theme_dark', time: 'pref_time_visible' };
+
+    function applyThemeState(isDark){
+      if(isDark){
+        document.documentElement.classList.add('dark');
+        themeToggle.classList.add('active');
+        themeToggle.setAttribute('aria-checked','true');
+      } else {
+        document.documentElement.classList.remove('dark');
+        themeToggle.classList.remove('active');
+        themeToggle.setAttribute('aria-checked','false');
+      }
+    }
+
+    function applyTimeState(visible){
+      if(visible){
+        timeToggleTop.classList.add('active');
+        timeToggleTop.setAttribute('aria-checked','true');
+        headerTimestamp.style.display = '';
+        asideTimestamp.style.display = '';
+        updateTimestamp();
+      } else {
+        timeToggleTop.classList.remove('active');
+        timeToggleTop.setAttribute('aria-checked','false');
+        headerTimestamp.style.display = 'none';
+        asideTimestamp.style.display = 'none';
+      }
+    }
+
+    // read saved prefs first, else fallback to aria-checked then defaults
+    function initTogglesFromPrefs(){
+      try {
+        const savedTheme = localStorage.getItem(LS_KEYS.theme);
+        const savedTime = localStorage.getItem(LS_KEYS.time);
+        // theme: if saved use that; else use aria-checked attribute (if present); else default true
+        let themeIsDark = true;
+        if(savedTheme !== null) themeIsDark = (savedTheme === '1');
+        else themeIsDark = (themeToggle && themeToggle.getAttribute('aria-checked') === 'true');
+
+        // time: if saved use that; else use aria-checked attribute; else default false
+        let timeVisible = false;
+        if(savedTime !== null) timeVisible = (savedTime === '1');
+        else timeVisible = (timeToggleTop && timeToggleTop.getAttribute('aria-checked') === 'true');
+
+        applyThemeState(themeIsDark);
+        applyTimeState(timeVisible);
+      } catch(e) {
+        // if localStorage fails, fallback to aria attributes
+        applyThemeState(themeToggle && themeToggle.getAttribute('aria-checked') === 'true');
+        applyTimeState(timeToggleTop && timeToggleTop.getAttribute('aria-checked') === 'true');
+      }
+    }
+
+    // toggle handlers with persistence
+    themeToggle.addEventListener('click', ()=>{
+      const isNow = themeToggle.classList.toggle('active');
+      // classList.toggle returns boolean only in modern browsers when passed nothing — use contains
+      const active = themeToggle.classList.contains('active');
+      applyThemeState(active);
+      try { localStorage.setItem(LS_KEYS.theme, active ? '1' : '0'); } catch(e){}
+    });
+
+    timeToggleTop.addEventListener('click', ()=>{
+      const active = timeToggleTop.classList.toggle('active') && timeToggleTop.classList.contains('active');
+      applyTimeState(active);
+      try { localStorage.setItem(LS_KEYS.time, active ? '1' : '0'); } catch(e){}
+    });
+
+    // keyboard accessibility already added; keep it but ensure Enter/Space toggles persist as well
+    document.querySelectorAll('.tiny-toggle').forEach(t=>{
+      t.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          t.click();
+        }
+      });
+    });
+
+    /* ---------- wire remaining UI listeners and init ---------- */
+    // generic autocalc attachments
     document.querySelectorAll('.wrap input, .wrap select').forEach(el=>{
       if(!el.dataset._autocalc){
         el.addEventListener('input', autoCalcActive);
@@ -657,10 +718,23 @@
       }
     });
 
+    // clear buttons keyboard accessible
     document.querySelectorAll('.clear-btn').forEach(b=>{
       b.setAttribute('tabindex','0');
       b.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); b.click(); } });
     });
+
+    // initial UI states
+    initTogglesFromPrefs();
+    updateActivePriceDisplay();
+    asideTimestamp.style.display = 'none';
+
+    // initial fetch once on load and set inputs (non-blocking)
+    try { update3(true); } catch(e){ console.log('update3 initial error', e); }
+
+    // initial auto-calc (after a short delay to allow possible fetch to set inputs)
+    setTimeout(autoCalcActive, 350);
+
   </script>
 </body>
 </html>
